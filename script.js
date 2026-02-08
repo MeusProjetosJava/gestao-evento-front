@@ -1,6 +1,5 @@
 const API_URL = "https://outward-unitable-colleen.ngrok-free.dev";
 
-let token = null;
 let html5QrCode = null;
 
 // 🔐 LOGIN
@@ -23,7 +22,9 @@ async function login() {
     }
 
     const data = await response.json();
-    token = data.token;
+
+    // ✅ SALVA TOKEN DE FORMA CONFIÁVEL
+    sessionStorage.setItem("authToken", data.token);
 
     document.getElementById("login-screen").classList.add("hidden");
     document.getElementById("scanner-screen").classList.remove("hidden");
@@ -44,6 +45,7 @@ function startScanner() {
     async (qrText) => {
       await html5QrCode.stop();
       html5QrCode = null;
+
       await sendCheckin(qrText);
     },
   );
@@ -51,6 +53,14 @@ function startScanner() {
 
 // 📡 CHECK-IN
 async function sendCheckin(qrCode) {
+  const token = sessionStorage.getItem("authToken");
+
+  if (!token) {
+    alert("Sessão expirada. Faça login novamente.");
+    logout();
+    return;
+  }
+
   try {
     const response = await fetch(`${API_URL}/check-ins`, {
       method: "POST",
@@ -71,9 +81,9 @@ async function sendCheckin(qrCode) {
   }
 }
 
-// 🚪 LOGOUT (AGORA CORRETO)
+// 🚪 LOGOUT
 function logout() {
-  token = null;
+  sessionStorage.removeItem("authToken");
 
   if (html5QrCode) {
     html5QrCode.stop();
