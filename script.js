@@ -3,7 +3,7 @@ const API_URL = "https://outward-unitable-colleen.ngrok-free.dev";
 let html5QrCode = null;
 let scanning = false;
 
-// 🔐 LOGIN
+
 async function login() {
   const emailInput = document.getElementById("email");
   const passwordInput = document.getElementById("password");
@@ -32,17 +32,17 @@ async function login() {
 
     const responseBody = await response.json();
 
-    // ✅ TOKEN RETORNADO PELO BACKEND
+    
     const accessToken = responseBody.accessToken;
 
     if (!accessToken) {
       throw new Error("Token não retornado pelo backend");
     }
 
-    // ✅ SALVA TOKEN DE FORMA CONFIÁVEL
+    
     sessionStorage.setItem("authToken", accessToken);
 
-    // 🔄 TROCA DE TELA
+    
     document.getElementById("login-screen").classList.add("hidden");
     document.getElementById("scanner-screen").classList.remove("hidden");
   } catch (error) {
@@ -50,7 +50,7 @@ async function login() {
   }
 }
 
-// 📷 SCANNER
+
 function startScanner() {
   if (html5QrCode !== null || scanning === true) {
     return;
@@ -71,7 +71,7 @@ function startScanner() {
       try {
         await html5QrCode.stop();
       } catch (error) {
-        // ignora erro de parada da câmera
+        
       }
 
       html5QrCode = null;
@@ -83,7 +83,7 @@ function startScanner() {
   );
 }
 
-// 📡 CHECK-IN
+
 async function sendCheckin(qrCode) {
   const token = sessionStorage.getItem("authToken");
 
@@ -115,7 +115,6 @@ async function sendCheckin(qrCode) {
   }
 }
 
-// 🚪 LOGOUT
 function logout() {
   sessionStorage.removeItem("authToken");
 
